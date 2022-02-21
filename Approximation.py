@@ -29,17 +29,17 @@ def fourier(x,c):
 def getDif(F,c,list):
     diff = 0
     for prediction in  range (len(list)):
-        diff+= abs( F(list[prediction][0], c) - 1/70* list[prediction][1]) 
-        print ("fourier: {} , acutal :{}".format(F(list[prediction][0], c), 1/70* list[prediction][1]))
+        diff+= abs( F(list[prediction][0], c) - 1/70* list[prediction][1])**2
+        # print ("fourier: {} , acutal :{}".format(F(list[prediction][0], c), 1/70* list[prediction][1]))
     return diff
 
 # def myfunc(x):
 #     return 500
 
-nattempts = 100
+nattempts = 10000
 successful = 0
 attempt = 1
-ncoef= 30
+ncoef= 70
 P0max= 50
 differences = 50
 bestt = 50
@@ -51,19 +51,18 @@ while attempt <= nattempts:
     while len(c) < ncoef:
         rand = random.uniform(-1,1)
         c.append(rand)
-    
-    # print (fourier(1,c))
     differences = getDif(fourier,c,list)
-    # print (differences)
-    
-
     if (differences < bestt) :
         bestcoeffs = c
-        print(bestt)
         successful = attempt
     attempt += 1
 
-print(bestcoeffs)
+
+c = bestcoeffs
+for i in range (10000):
+    # plt.scatter(list[i][0],1/70* list[i][1],color="b")
+    plt.scatter(i/1000, fourier(i/1000,c), color = "r")
+
+
 print("Attemt {} was successful".format(successful))
-print(bestt)
-plt.plot(list[0])
+plt.show()
