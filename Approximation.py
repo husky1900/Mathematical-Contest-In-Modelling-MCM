@@ -1,6 +1,5 @@
 from cProfile import label
 from turtle import color
-from more_itertools import difference
 import numpy as np
 import random
 import matplotlib.pyplot as plt
@@ -30,11 +29,8 @@ def getDif(F,c,list):
     diff = 0
     for prediction in  range (len(list)):
         diff+= abs( F(list[prediction][0], c) - 1/70* list[prediction][1])**2
-        # print ("fourier: {} , acutal :{}".format(F(list[prediction][0], c), 1/70* list[prediction][1]))
     return diff
 
-# def myfunc(x):
-#     return 500
 
 nattempts = 10000
 successful = 0
@@ -46,7 +42,7 @@ bestt = 50
 bestcoeffs=[]
 
 while attempt <= nattempts:
-    print("Attempt {}".format(attempt))
+    # print("Attempt {}".format(attempt))
     c = [7]
     while len(c) < ncoef:
         rand = random.uniform(-1,1)
@@ -59,10 +55,15 @@ while attempt <= nattempts:
 
 
 c = bestcoeffs
-for i in range (10000):
+# for i in range (10000):
     # plt.scatter(list[i][0],1/70* list[i][1],color="b")
-    plt.scatter(i/1000, fourier(i/1000,c), color = "r")
+    # plt.scatter(i/1000, fourier(i/1000,c), color = "r")
 
 
 print("Attemt {} was successful".format(successful))
-plt.show()
+f = open("track1.txt", "a")
+f.write(str(c))
+f.close()
+
+
+# plt.show()
