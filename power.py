@@ -41,13 +41,19 @@ def P(x,v,c,E):
         return 0
 
 def F(x,v):
-    return b*v + C + s*(v**2)*np.exp(-((x-xturn)/(.2*wturn))**2) 
+    gaussum = 0
+    i = 0
+    while i < len(xturn):
+        gaussum += s*(v**2)*np.exp(-((x-xturn[i])/(.2*wturn[i]))**2)
+        i += 1
+    return b*v + C + gaussum
 
 def Pmax(E):
     return -(P0max/Emax**2)*x**2 + P0max
 
-xturn = .5
-wturn = .05
+xturn = [.25,.75]
+wturn = [.05, .05]
+
 s = .3
 Emax = 100
 P0max = 50
@@ -72,7 +78,7 @@ while attempt <= nattempts:
     x = .001
     v = .001
     E = 0
-    t=0
+    t = 0
     stopped = False
     noE = False
     while x < distance:
@@ -107,8 +113,7 @@ c = bestcoeffs
 x = .001
 v = .001
 E = 0
-t=0
-dt = .001
+t = 0
 stopped = False
 noE = False
 while x < distance:
