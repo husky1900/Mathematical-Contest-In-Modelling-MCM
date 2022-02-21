@@ -3,6 +3,8 @@ from turtle import color
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+track1File = open('track1.txt','r')
+track1 = str.split(track1File.readline()[1:-1],',')
 
 def taylor(x,c):
     ts = [1]
@@ -41,19 +43,13 @@ def P(x,v,c,E):
         return 0
 
 def F(x,v):
-    gaussum = 0
-    i = 0
-    while i < len(xturn):
-        gaussum += s*(v**2)*np.exp(-((x-xturn[i])/(.2*wturn[i]))**2)
-        i += 1
-    return b*v + C + gaussum
+    return b*v + C + s*(v**2)*np.exp(-((x-xturn)/(.2*wturn))**2) 
 
 def Pmax(E):
     return -(P0max/Emax**2)*x**2 + P0max
 
-xturn = [.25,.75]
-wturn = [.05, .05]
-
+xturn = .5
+wturn = .05
 s = .3
 Emax = 100
 P0max = 50
@@ -78,7 +74,7 @@ while attempt <= nattempts:
     x = .001
     v = .001
     E = 0
-    t = 0
+    t=0
     stopped = False
     noE = False
     while x < distance:
@@ -113,7 +109,8 @@ c = bestcoeffs
 x = .001
 v = .001
 E = 0
-t = 0
+t=0
+dt = .001
 stopped = False
 noE = False
 while x < distance:
