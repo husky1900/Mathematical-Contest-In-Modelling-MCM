@@ -18,9 +18,9 @@ def fourier(x,c):
     fs = [1]
     n=1
     while len(fs) < ncoef:
-        fs.append(np.sin(n*x))
+        fs.append(np.sin(n*x/distance))
         if len(fs) < ncoef:
-            fs.append(np.cos(n*x))
+            fs.append(np.cos(n*x/distance))
         n+=1
     return np.dot(np.array(c),np.array(fs)) 
 
@@ -31,7 +31,7 @@ def Pd(x,c):
     return fourier(x,c)
 
 def g(x):
-    return 10*np.sin(10*x) + 9
+    return G*(x-.5)
 
 def P(x,v,c,E):
     PD = Pd(x,c) - .95*sigmoid(Pd(x,c),E)* Pd(x,c) + g(x)*v
@@ -40,32 +40,35 @@ def P(x,v,c,E):
     if PD < 0:
         return 0
 
-def F(v):
-    return b*v + C #add guassian for turns
+def F(x,v):
+    return b*v + C + s*(v**2)*np.exp(-((x-xturn)/(.2*wturn))**2) 
 
 def Pmax(E):
     return -(P0max/Emax**2)*x**2 + P0max
 
-
-Emax = 200
+xturn = .5
+wturn = .05
+s = .3
+Emax = 100
 P0max = 50
 distance = 1
 b = .2
 C = 7
 G = 2
 bestcoeffs = 'none'
-bestt = 1
-ncoef = 30
+bestt = 2
+ncoef = 20
 dt = .001
 attempt = 1
-nattempts = 100
-successful = 0
+nattempts = 1000
 while attempt <= nattempts:
     print(attempt)
+
     c = [random.uniform(0,1.5*P0max)]
     while len(c) < ncoef:
         rand = random.uniform(-1.5*P0max,1.5*P0max)
         c.append(rand)
+
     x = .001
     v = .001
     E = 0
@@ -73,14 +76,14 @@ while attempt <= nattempts:
     stopped = False
     noE = False
     while x < distance:
-        f = F(v)
+        f = F(x,v)
         p = P(x,v,c,E)
         v = p/f
         x += v*dt
         E += Pd(x,c)*dt
         t += dt
 
-        if  v <= 0:
+        if  v < 0:
             stopped = True
             break
         if E >= Emax:
@@ -89,13 +92,45 @@ while attempt <= nattempts:
         if t > bestt:
             break
 
+    attempt += 1
     if (t < bestt) and (not stopped) and (not noE):
         bestt = t
         bestv = v
         bestcoeffs = c
+        attempt = 0
         print(bestt)
-        successful = attempt
-    attempt += 1
+    
+print(bestcoeffs)
+print(bestt)
+
+c = bestcoeffs
+x = .001
+v = .001
+E = 0
+t=0
+dt = .001
+stopped = False
+noE = False
+while x < distance:
+    f = F(x,v)
+    p = P(x,v,c,E)
+    v = p/f
+    x += v*dt
+    E += Pd(x,c)*dt
+    t += dt
+    plt.scatter(x,10*v, color = "g", marker=".")
+    plt.scatter(x,Pd(x,c), color = "b", marker=".")
+    #plt.scatter(x, 5*(x-.5)**2 + 9, color = "r", marker="." )
+    if v < 0:
+        stopped = True
+        break
+    if E > Emax:
+        noE = True
+        break
+    if t > bestt:
+        break
+plt.show()
+
 print(bestcoeffs)
 print("Attemt {} was successful".format(successful))
 print(bestt)
