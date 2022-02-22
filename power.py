@@ -3,9 +3,6 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-track1File = open('track1.txt','r')
-track1 = str.split(track1File.readline()[1:-1],',')
-
 def taylor(x,c):
     ts = [1]
     n=1
@@ -33,7 +30,7 @@ def Pd(x,c):
     return fourier(x,c)
 
 def g(x):
-    return G*(x-.5)
+    return -G*np.sin(12*x)
 
 def P(x,v,c,E):
     PD = Pd(x,c) - .95*sigmoid(Pd(x,c),E)* Pd(x,c) - g(x)*v #pay attension to sign
@@ -46,17 +43,17 @@ def F(x,v):
     gaussum = 0
     i = 0
     while i < len(xturn):
-        gaussum += s*(v**2)*np.exp(-((x-xturn[i])/(.2*wturn[i]))**2)
+        gaussum += s[i]*(v**2)*np.exp(-((x-xturn[i])/(.2*wturn[i]))**2)
         i += 1
     return b*v + C + gaussum
 
 def Pmax(E):
     return -(P0max/Emax**2)*x**2 + P0max
 
-xturn = [.25,.75]
-wturn = [.05, .05]
+xturn = [.19,.2,.72]
+wturn = [.05, .05,.05]
 
-s = .3
+s = [.4,.3,.3]
 Emax = 100
 P0max = 50
 distance = 1
@@ -174,39 +171,3 @@ plt.legend()
 plt.show()
 
 
-
-
-
-
-
-
-
-
-'''
-c = bestcoeffs
-x = .001
-v = .001
-E = 0
-t = 0
-stopped = False
-noE = False
-while x < distance:
-    f = F(x,v)
-    p = P(x,v,c,E)
-    v = p/f
-    x += v*dt
-    E += Pd(x,c)*dt
-    t += dt
-    plt.scatter(x,10*v, color = "g", marker=".")
-    plt.scatter(x,Pd(x,c), color = "b", marker=".")
-    #plt.scatter(x, 5*(x-.5)**2 + 9, color = "r", marker="." )
-    if v < 0:
-        stopped = True
-        break
-    if E > Emax:
-        noE = True
-        break
-    if t > bestt:
-        break
-plt.show()
-'''
